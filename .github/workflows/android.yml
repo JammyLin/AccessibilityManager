@@ -16,19 +16,13 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - id: get-project
-      name: Get project name
-      run: echo "::set-output name=PROJECT::$(cat project-to-build)"
-    - name: Clone project
-      run: git clone --depth=1 ${{ steps.get-project.outputs.PROJECT }} project
-    - name: Build the app
-      working-directory: ./project
-      run: |
-        if [ ! -f "gradlew" ]; then gradle wrapper; fi
-        chmod +x gradlew
-        ./gradlew assembleDebug --stacktrace
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: my-build-apk
+        name: AccessibilityManager
         path: ./**/*.apk
